@@ -35,8 +35,16 @@ def get_page(url):
     response = requests.get(
         url,
         headers=HEADERS,
-        timeout=30
+        timeout=30,
+        allow_redirects=True
     )
+
+    print(
+        f"  HTTP {response.status_code} | "
+        f"{response.headers.get('Content-Type', 'unknown')} | "
+        f"{response.url}"
+    )
+
     response.raise_for_status()
     return response
 
