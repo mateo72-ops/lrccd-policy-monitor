@@ -18,9 +18,16 @@ CHANGES_FILE = Path("changes.json")
 
 HEADERS = {
     "User-Agent": (
-        "Mozilla/5.0 LRCCD-Policy-Monitor/1.0 "
-        "(public policy monitoring)"
-    )
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/154.0.0.0 Safari/537.36"
+    ),
+    "Accept": (
+        "text/html,application/xhtml+xml,application/xml;q=0.9,"
+        "application/pdf;q=0.8,*/*;q=0.7"
+    ),
+    "Accept-Language": "en-US,en;q=0.9",
+    "Referer": POLICY_PAGE,
 }
 
 
