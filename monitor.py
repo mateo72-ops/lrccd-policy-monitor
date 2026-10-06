@@ -1,5 +1,7 @@
+import hashlib
 import json
 import re
+from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urljoin
 
@@ -11,97 +13,191 @@ POLICY_PAGE = (
     "board-of-trustees/policies-and-regulations"
 )
 
-OUTPUT_FILE = Path("policy_index.json")
+STATE_FILE = Path("policy_state.json")
+CHANGES_FILE = Path("changes.json")
+
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 LRCCD-Policy-Monitor/1.0 "
+        "(public policy monitoring)"
+    )
+}
 
 
-def get_policy_page():
-    headers = {
-        "User-Agent": (
-            "Mozilla/5.0 LRCCD-Policy-Monitor/1.0 "
-            "(public policy monitoring)"
-        )
-    }
-
+def get_page(url):
     response = requests.get(
-        POLICY_PAGE,
-        headers=headers,
+        url,
+        headers=HEADERS,
         timeout=30
     )
     response.raise_for_status()
-    return response.text
+    return response
 
 
-def discover_documents(html):
-    soup = BeautifulSoup(html, "html.parser")
-    documents = []
+def discover_documents():
+    response = get_page(POLICY_PAGE)
+    soup = BeautifulSoup(response.text, "html.parser")
+
+    documents = {}
 
     for link in soup.find_all("a", href=True):
-        href = link["href"]
         text = " ".join(link.stripped_strings)
 
         if not text:
             continue
 
-        # Look for four-digit Los Rios policy/regulation numbers
-        match = re.search(r"\b([1-9]\d{3})\b", text)
+        match = re.search(
+            r"\b(Policy|Regulation)\s+([1-9]\d{3})\b",
+            text,
+            re.IGNORECASE
+        )
 
         if not match:
             continue
 
-        document_number = match.group(1)
-        full_url = urljoin(POLICY_PAGE, href)
+        document_type = match.group(1).title()
+        document_number = match.group(2)
 
-        documents.append(
-            {
-                "document_number": document_number,
-                "title": text,
-                "url": full_url,
-            }
-        )
+        title = re.sub(
+            r"^(Policy|Regulation)\s+[1-9]\d{3}\s*[-–:]?\s*",
+            "",
+            text,
+            flags=re.IGNORECASE
+        ).strip()
 
-    # Remove duplicates
-    unique = {}
+        url = urljoin(POLICY_PAGE, link["href"])
 
-    for document in documents:
-        key = (
-            document["document_number"],
-            document["url"],
-        )
-        unique[key] = document
+        key = f"{document_type}-{document_number}"
 
-    return list(unique.values())
+        documents[key] = {
+            "document_number": document_number,
+            "document_type": document_type,
+            "title": title,
+            "url": url,
+        }
+
+    return documents
+
+
+def fingerprint_url(url):
+    response = get_page(url)
+
+    return {
+        "sha256": hashlib.sha256(response.content).hexdigest(),
+        "size_bytes": len(response.content),
+        "content_type": response.headers.get(
+            "Content-Type", ""
+        ),
+    }
+
+
+def load_previous_state():
+    if not STATE_FILE.exists():
+        return {}
+
+    return json.loads(
+        STATE_FILE.read_text(encoding="utf-8")
+    )
 
 
 def main():
-    print("Checking Los Rios Policies and Regulations...")
-    print(POLICY_PAGE)
+    print("LRCCD Policy & Regulation Monitor")
+    print("---------------------------------")
 
-    html = get_policy_page()
-    documents = discover_documents(html)
+    checked_at = datetime.now(timezone.utc).isoformat()
 
-    documents.sort(
-        key=lambda item: (
-            item["document_number"],
-            item["title"]
+    documents = discover_documents()
+
+    print(f"Discovered {len(documents)} documents.")
+
+    previous_state = load_previous_state()
+
+    new_state = {}
+    changes = []
+
+    for count, (key, document) in enumerate(
+        sorted(documents.items()),
+        start=1
+    ):
+        print(
+            f"[{count}/{len(documents)}] "
+            f"{key} - {document['title']}"
         )
+
+        try:
+            fingerprint = fingerprint_url(document["url"])
+
+        except Exception as error:
+            print(f"  ERROR: {error}")
+
+            document["status"] = "error"
+            document["error"] = str(error)
+            document["last_checked"] = checked_at
+
+            new_state[key] = document
+            continue
+
+        current = {
+            **document,
+            **fingerprint,
+            "last_checked": checked_at,
+        }
+
+        previous = previous_state.get(key)
+
+        if previous is None:
+            current["status"] = "baseline"
+
+        elif previous.get("sha256") != current["sha256"]:
+            current["status"] = "changed"
+
+            changes.append(
+                {
+                    "key": key,
+                    "document_number":
+                        current["document_number"],
+                    "document_type":
+                        current["document_type"],
+                    "title": current["title"],
+                    "url": current["url"],
+                    "detected_at": checked_at,
+                    "old_sha256":
+                        previous.get("sha256"),
+                    "new_sha256":
+                        current["sha256"],
+                    "old_size_bytes":
+                        previous.get("size_bytes"),
+                    "new_size_bytes":
+                        current["size_bytes"],
+                }
+            )
+
+            print("  *** CHANGE DETECTED ***")
+
+        else:
+            current["status"] = "unchanged"
+
+        new_state[key] = current
+
+    STATE_FILE.write_text(
+        json.dumps(new_state, indent=2),
+        encoding="utf-8"
     )
 
-    OUTPUT_FILE.write_text(
-        json.dumps(documents, indent=2),
+    CHANGES_FILE.write_text(
+        json.dumps(changes, indent=2),
         encoding="utf-8"
     )
 
     print()
-    print(f"Found {len(documents)} policy/regulation links.")
-    print(f"Saved inventory to {OUTPUT_FILE}")
+    print("---------------------------------")
+    print(f"Documents checked: {len(new_state)}")
+    print(f"Changes detected: {len(changes)}")
 
-    print("\nFirst 10 discovered documents:")
-
-    for document in documents[:10]:
+    if not previous_state:
         print(
-            document["document_number"],
-            "-",
-            document["title"]
+            "Initial baseline created. "
+            "Future runs will detect changes."
         )
 
 
