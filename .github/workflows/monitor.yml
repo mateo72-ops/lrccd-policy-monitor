@@ -2,6 +2,11 @@ name: LRCCD Policy Monitor
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "0 15 * * 1"
+
+permissions:
+  contents: write
 
 jobs:
   monitor:
@@ -24,13 +29,26 @@ jobs:
 
       - name: Show results
         run: |
-          echo "Policy inventory created:"
-          ls -la
-          echo "Number of records:"
-          python -c "import json; print(len(json.load(open('policy_index.json'))))"
+          echo "Monitor completed."
+          python -c "import json; d=json.load(open('policy_state.json')); print('Documents tracked:', len(d))"
+          python -c "import json; d=json.load(open('changes.json')); print('Changes detected:', len(d))"
 
-      - name: Upload policy inventory
+      - name: Save monitoring state
+        run: |
+          git config user.name "LRCCD Policy Monitor"
+          git config user.email "actions@github.com"
+          git add policy_state.json changes.json
+          if git diff --cached --quiet; then
+            echo "No monitoring state changes to save."
+          else
+            git commit -m "Update policy monitoring state"
+            git push
+          fi
+
+      - name: Upload monitoring results
         uses: actions/upload-artifact@v4
         with:
-          name: lrccd-policy-inventory
-          path: policy_index.json
+          name: lrccd-policy-monitor-results
+          path: |
+            policy_state.json
+            changes.json
