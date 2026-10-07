@@ -1,6 +1,8 @@
-import difflib
-import re
+from datetime import datetime, timezone
 from pathlib import Path
+
+from monitor import make_change_report
+
 
 BASELINE = Path("document_text/Policy-1111.txt")
 
@@ -13,99 +15,46 @@ revised_text = original_text.replace(
     "The District shall promptly inform the public of important events"
 )
 
-
-def find_section(lines, changed_line_index):
-    """
-    Look backward from a changed line and find the nearest
-    numbered section heading.
-    """
-    section_pattern = re.compile(
-        r"^\s*(\d+(?:\.\d+)*)\s+(.+)$"
+if revised_text == original_text:
+    raise RuntimeError(
+        "Test text was not found in Policy-1111 baseline. "
+        "No simulated change was created."
     )
 
-    for index in range(changed_line_index, -1, -1):
-        line = lines[index].strip()
-        match = section_pattern.match(line)
+document = {
+    "title": "News Media Communication",
+    "document_type": "Policy",
+    "document_number": "1111",
+    "url": "SIMULATED TEST - NO LIVE DOCUMENT CHANGED",
+}
 
-        if match:
-            section_number = match.group(1)
-            section_title = match.group(2)
+detected_at = datetime.now(timezone.utc).isoformat()
 
-            # Ignore numbered paragraphs that are really body text.
-            if len(section_title.split()) <= 8:
-                return f"{section_number} {section_title}"
-
-    return "Section could not be determined automatically"
-
-
-original_lines = original_text.splitlines()
-revised_lines = revised_text.splitlines()
-
-matcher = difflib.SequenceMatcher(
-    None,
-    original_lines,
-    revised_lines
+report_file, added, removed = make_change_report(
+    "Policy-1111-TEST",
+    document,
+    original_text,
+    revised_text,
+    detected_at,
 )
 
-changes = []
-
-for tag, i1, i2, j1, j2 in matcher.get_opcodes():
-    if tag == "equal":
-        continue
-
-    old_lines = original_lines[i1:i2]
-    new_lines = revised_lines[j1:j2]
-
-    section = find_section(
-        original_lines,
-        max(i1 - 1, 0)
-    )
-
-    changes.append(
-        {
-            "type": tag,
-            "section": section,
-            "old": old_lines,
-            "new": new_lines,
-        }
-    )
-
 print("=" * 70)
-print("LRCCD POLICY CHANGE REPORT - AUTOMATIC SECTION TEST")
+print("PRODUCTION CHANGE REPORT TEST")
 print("=" * 70)
 print()
-print("Document: Policy 1111 - News Media Communication")
-print("Test type: Simulated policy revision")
 print("Production baseline modified: NO")
+print(f"Report created: {report_file}")
+print(f"Lines added: {added}")
+print(f"Lines removed: {removed}")
 print()
-print(f"Changes found: {len(changes)}")
+print("Generated production report:")
+print("-" * 70)
 print()
 
-for number, change in enumerate(changes, start=1):
-    print("-" * 70)
-    print(f"CHANGE {number}")
-    print("-" * 70)
-    print()
-    print(f"Section affected: {change['section']}")
-    print()
+report_text = Path(report_file).read_text(encoding="utf-8")
+print(report_text)
 
-    print("Previous language:")
-    if change["old"]:
-        for line in change["old"]:
-            print(f"- {line}")
-    else:
-        print("- No previous text")
-
-    print()
-    print("Revised language:")
-    if change["new"]:
-        for line in change["new"]:
-            print(f"+ {line}")
-    else:
-        print("+ Text removed")
-
-    print()
-
+print()
 print("=" * 70)
 print("TEST COMPLETE - NO PRODUCTION BASELINES WERE CHANGED")
 print("=" * 70)
