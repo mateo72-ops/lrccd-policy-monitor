@@ -95,64 +95,110 @@ def save_text(key, text):
 
 def make_change_report(key, document, old_text, new_text, detected_at):
     REPORT_DIR.mkdir(exist_ok=True)
+
+    old_lines = old_text.splitlines()
+    new_lines = new_text.splitlines()
+
+    matcher = difflib.SequenceMatcher(None, old_lines, new_lines)
+
+    affected_sections = []
+    change_details = []
+
+    for tag, i1, i2, j1, j2 in matcher.get_opcodes():
+        if tag == "equal":
+            continue
+
+        section = find_section(old_lines, max(i1 - 1, 0))
+
+        if section not in affected_sections:
+            affected_sections.append(section)
+
+        previous_lines = old_lines[i1:i2]
+        revised_lines = new_lines[j1:j2]
+
+        change_details.append({
+            "section": section,
+            "previous": previous_lines,
+            "revised": revised_lines,
+        })
+
     diff_lines = list(difflib.unified_diff(
-        old_text.splitlines(),
-        new_text.splitlines(),
+        old_lines,
+        new_lines,
         fromfile=f"{key} OLD",
         tofile=f"{key} NEW",
         lineterm="",
         n=3,
     ))
 
-    old_lines = old_text.splitlines()
-    new_lines = new_text.splitlines()
-
-    matcher = difflib.SequenceMatcher(
-        None,
-        old_lines,
-        new_lines,
+    added = sum(
+        1 for line in diff_lines
+        if line.startswith("+") and not line.startswith("+++")
+    )
+    removed = sum(
+        1 for line in diff_lines
+        if line.startswith("-") and not line.startswith("---")
     )
 
-    affected_sections = []
-
-    for tag, i1, i2, j1, j2 in matcher.get_opcodes():
-        if tag == "equal":
-            continue
-
-        section = find_section(
-            old_lines,
-            max(i1 - 1, 0)
-        )
-
-        if section not in affected_sections:
-            affected_sections.append(section)
     safe_time = detected_at.replace(":", "-").replace("+", "_")
     report_path = REPORT_DIR / f"{key}_{safe_time}.md"
 
-    section_lines = ["## Affected section(s)", ""]
-
-    if affected_sections:
-        for section in affected_sections:
-            section_lines.append(f"- {section}")
-    else:
-        section_lines.append("- Section could not be determined automatically")
-
-    section_lines.append("")
-    header = [
-        f"# Change Report: {key}", "",
-        f"**Title:** {document['title']}",
-        f"**Type:** {document['document_type']}",
-        f"**Number:** {document['document_number']}",
-        f"**Detected:** {detected_at}",
-        f"**Source:** {document['url']}", "",
-        "## Text changes", "",
-        "Lines beginning with `-` were removed from the prior version.",
-        "Lines beginning with `+` were added in the new version.", "",
-        "```diff",
+    report = [
+        f"# LRCCD Policy & Regulation Change Alert",
+        "",
+        f"## {document['document_type']} {document['document_number']} — {document['title']}",
+        "",
+        f"**Change detected:** {detected_at}",
+        f"**Source:** {document['url']}",
+        "",
+        "## What changed",
+        "",
     ]
-    report_path.write_text("\n".join(header + section_lines + diff_lines + ["```", ""]), encoding="utf-8")
-    added = sum(1 for line in diff_lines if line.startswith("+") and not line.startswith("+++"))
-    removed = sum(1 for line in diff_lines if line.startswith("-") and not line.startswith("---"))
+
+    for number, change in enumerate(change_details, start=1):
+        report.append(f"### Change {number}")
+        report.append("")
+        report.append(f"**Affected section:** {change['section']}")
+        report.append("")
+        report.append("**Previous language**")
+        report.append("")
+
+        if change["previous"]:
+            report.append("> " + "\n> ".join(change["previous"]))
+        else:
+            report.append("> *No previous text — new language was added.*")
+
+        report.append("")
+        report.append("**Revised language**")
+        report.append("")
+
+        if change["revised"]:
+            report.append("> " + "\n> ".join(change["revised"]))
+        else:
+            report.append("> *Text was removed.*")
+
+        report.append("")
+
+    report.extend([
+        "## Change summary",
+        "",
+        f"- **Affected section(s):** {', '.join(affected_sections)}",
+        f"- **Lines added:** {added}",
+        f"- **Lines removed:** {removed}",
+        "",
+        "<details>",
+        "<summary>Technical text comparison</summary>",
+        "",
+        "```diff",
+        *diff_lines,
+        "```",
+        "",
+        "</details>",
+        "",
+    ])
+
+    report_path.write_text("\n".join(report), encoding="utf-8")
+
     return str(report_path), added, removed
 
 def main():
