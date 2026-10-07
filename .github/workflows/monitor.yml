@@ -37,7 +37,7 @@ jobs:
         run: |
           git config user.name "LRCCD Policy Monitor"
           git config user.email "actions@github.com"
-          git add policy_state.json changes.json
+          git add policy_state.json changes.json document_text/
           if git diff --cached --quiet; then
             echo "No monitoring state changes to save."
           else
