@@ -27,7 +27,23 @@ jobs:
       - name: Run simulated change report test
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: python test_change_report.py
-        
+      - name: Create simulated change alert
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          REPORT_FILE=$(find change_reports -name 'Policy-1111-TEST_*.md' -type f | head -1)
+
+          if [ -z "$REPORT_FILE" ]; then
+            echo "No simulated report found."
+            exit 1
+          fi
+
+          gh issue create \
+            --title "TEST - LRCCD Policy Change Detected - Policy 1111" \
+            --body-file "$REPORT_FILE"
+
+          echo "Test alert successfully created."
       - name: Show results
         run: |
           echo "Monitor completed."
