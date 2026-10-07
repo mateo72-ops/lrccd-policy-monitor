@@ -80,7 +80,7 @@ def discover_documents():
             flags=re.IGNORECASE
         ).strip()
 
-url = urljoin("https://losrios.edu/", link["href"].lstrip("/"))
+        url = urljoin("https://losrios.edu/", link["href"].lstrip("/"))
 
         key = f"{document_type}-{document_number}"
 
