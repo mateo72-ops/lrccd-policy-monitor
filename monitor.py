@@ -94,6 +94,7 @@ def save_text(key, text):
     return str(path)
 
 def make_change_report(key, document, old_text, new_text, detected_at):
+    REPORT_DIR.mkdir(exist_ok=True)
     diff_lines = list(difflib.unified_diff(
         old_text.splitlines(),
         new_text.splitlines(),
