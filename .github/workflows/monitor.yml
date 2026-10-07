@@ -23,6 +23,11 @@ jobs:
         run: pip install -r requirements.txt
       - name: Run policy monitor
         run: python monitor.py
+        
+      - name: Run simulated change report test
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: python test_change_report.py
+        
       - name: Show results
         run: |
           echo "Monitor completed."
