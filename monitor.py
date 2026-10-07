@@ -1,4 +1,5 @@
 import hashlib
+import io
 import json
 import re
 from datetime import datetime, timezone
@@ -7,6 +8,7 @@ from urllib.parse import urljoin
 
 import requests
 from bs4 import BeautifulSoup
+from pypdf import PdfReader
 
 POLICY_PAGE = (
     "https://losrios.edu/about-los-rios/"
@@ -15,6 +17,7 @@ POLICY_PAGE = (
 
 STATE_FILE = Path("policy_state.json")
 CHANGES_FILE = Path("changes.json")
+TEXT_DIR = Path("document_text")
 
 HEADERS = {
     "User-Agent": (
@@ -36,7 +39,7 @@ def get_page(url):
         url,
         headers=HEADERS,
         timeout=30,
-        allow_redirects=True
+        allow_redirects=True,
     )
 
     print(
@@ -52,21 +55,18 @@ def get_page(url):
 def discover_documents():
     response = get_page(POLICY_PAGE)
     soup = BeautifulSoup(response.text, "html.parser")
-
     documents = {}
 
     for link in soup.find_all("a", href=True):
         text = " ".join(link.stripped_strings)
-
         if not text:
             continue
 
         match = re.search(
             r"\b(Policy|Regulation)\s+([1-9]\d{3})\b",
             text,
-            re.IGNORECASE
+            re.IGNORECASE,
         )
-
         if not match:
             continue
 
@@ -77,13 +77,15 @@ def discover_documents():
             r"^(Policy|Regulation)\s+[1-9]\d{3}\s*[-–:]?\s*",
             "",
             text,
-            flags=re.IGNORECASE
+            flags=re.IGNORECASE,
         ).strip()
 
-        url = urljoin("https://losrios.edu/", link["href"].lstrip("/"))
+        url = urljoin(
+            "https://losrios.edu/",
+            link["href"].lstrip("/"),
+        )
 
         key = f"{document_type}-{document_number}"
-
         documents[key] = {
             "document_number": document_number,
             "document_type": document_type,
@@ -94,25 +96,42 @@ def discover_documents():
     return documents
 
 
-def fingerprint_url(url):
-    response = get_page(url)
+def extract_pdf_text(pdf_bytes):
+    reader = PdfReader(io.BytesIO(pdf_bytes))
+    pages = []
 
-    return {
-        "sha256": hashlib.sha256(response.content).hexdigest(),
-        "size_bytes": len(response.content),
-        "content_type": response.headers.get(
-            "Content-Type", ""
-        ),
+    for page in reader.pages:
+        text = page.extract_text() or ""
+        pages.append(text)
+
+    return "\n\n".join(pages).strip()
+
+
+def download_document(url):
+    response = get_page(url)
+    pdf_bytes = response.content
+
+    fingerprint = {
+        "sha256": hashlib.sha256(pdf_bytes).hexdigest(),
+        "size_bytes": len(pdf_bytes),
+        "content_type": response.headers.get("Content-Type", ""),
     }
+
+    return pdf_bytes, fingerprint
 
 
 def load_previous_state():
     if not STATE_FILE.exists():
         return {}
 
-    return json.loads(
-        STATE_FILE.read_text(encoding="utf-8")
-    )
+    return json.loads(STATE_FILE.read_text(encoding="utf-8"))
+
+
+def save_text(key, text):
+    TEXT_DIR.mkdir(exist_ok=True)
+    text_file = TEXT_DIR / f"{key}.txt"
+    text_file.write_text(text, encoding="utf-8")
+    return str(text_file)
 
 
 def main():
@@ -120,19 +139,16 @@ def main():
     print("---------------------------------")
 
     checked_at = datetime.now(timezone.utc).isoformat()
-
     documents = discover_documents()
-
     print(f"Discovered {len(documents)} documents.")
 
     previous_state = load_previous_state()
-
     new_state = {}
     changes = []
 
     for count, (key, document) in enumerate(
         sorted(documents.items()),
-        start=1
+        start=1,
     ):
         print(
             f"[{count}/{len(documents)}] "
@@ -140,16 +156,16 @@ def main():
         )
 
         try:
-            fingerprint = fingerprint_url(document["url"])
-
+            pdf_bytes, fingerprint = download_document(document["url"])
         except Exception as error:
             print(f"  ERROR: {error}")
-
-            document["status"] = "error"
-            document["error"] = str(error)
-            document["last_checked"] = checked_at
-
-            new_state[key] = document
+            current = {
+                **document,
+                "status": "error",
+                "error": str(error),
+                "last_checked": checked_at,
+            }
+            new_state[key] = current
             continue
 
         current = {
@@ -160,48 +176,74 @@ def main():
 
         previous = previous_state.get(key)
 
-        if previous is None:
+        if previous is None or previous.get("sha256") is None:
             current["status"] = "baseline"
+
+            try:
+                text = extract_pdf_text(pdf_bytes)
+                current["text_file"] = save_text(key, text)
+                current["text_extracted"] = True
+            except Exception as error:
+                print(f"  TEXT EXTRACTION ERROR: {error}")
+                current["text_extracted"] = False
+                current["text_error"] = str(error)
 
         elif previous.get("sha256") != current["sha256"]:
             current["status"] = "changed"
+            print("  *** CHANGE DETECTED ***")
+
+            try:
+                text = extract_pdf_text(pdf_bytes)
+                current["text_file"] = save_text(key, text)
+                current["text_extracted"] = True
+            except Exception as error:
+                print(f"  TEXT EXTRACTION ERROR: {error}")
+                current["text_extracted"] = False
+                current["text_error"] = str(error)
 
             changes.append(
                 {
                     "key": key,
-                    "document_number":
-                        current["document_number"],
-                    "document_type":
-                        current["document_type"],
+                    "document_number": current["document_number"],
+                    "document_type": current["document_type"],
                     "title": current["title"],
                     "url": current["url"],
                     "detected_at": checked_at,
-                    "old_sha256":
-                        previous.get("sha256"),
-                    "new_sha256":
-                        current["sha256"],
-                    "old_size_bytes":
-                        previous.get("size_bytes"),
-                    "new_size_bytes":
-                        current["size_bytes"],
+                    "old_sha256": previous.get("sha256"),
+                    "new_sha256": current["sha256"],
+                    "old_size_bytes": previous.get("size_bytes"),
+                    "new_size_bytes": current["size_bytes"],
                 }
             )
 
-            print("  *** CHANGE DETECTED ***")
-
         else:
             current["status"] = "unchanged"
+            text_path = TEXT_DIR / f"{key}.txt"
+
+            if not text_path.exists():
+                try:
+                    text = extract_pdf_text(pdf_bytes)
+                    current["text_file"] = save_text(key, text)
+                    current["text_extracted"] = True
+                    print("  Text baseline created.")
+                except Exception as error:
+                    print(f"  TEXT EXTRACTION ERROR: {error}")
+                    current["text_extracted"] = False
+                    current["text_error"] = str(error)
+            else:
+                current["text_file"] = str(text_path)
+                current["text_extracted"] = True
 
         new_state[key] = current
 
     STATE_FILE.write_text(
         json.dumps(new_state, indent=2),
-        encoding="utf-8"
+        encoding="utf-8",
     )
 
     CHANGES_FILE.write_text(
         json.dumps(changes, indent=2),
-        encoding="utf-8"
+        encoding="utf-8",
     )
 
     print()
@@ -209,11 +251,13 @@ def main():
     print(f"Documents checked: {len(new_state)}")
     print(f"Changes detected: {len(changes)}")
 
-    if not previous_state:
-        print(
-            "Initial baseline created. "
-            "Future runs will detect changes."
-        )
+    extracted = sum(
+        1
+        for item in new_state.values()
+        if item.get("text_extracted")
+    )
+
+    print(f"Text baselines available: {extracted}")
 
 
 if __name__ == "__main__":
