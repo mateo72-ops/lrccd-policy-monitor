@@ -56,14 +56,55 @@ jobs:
             changes.json
             change_reports/
           if-no-files-found: ignore
-      - name: Create issue when changes are detected
+      - name: Create detailed issue when changes are detected
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           CHANGE_COUNT=$(python -c "import json; print(len(json.load(open('changes.json'))))")
+
           if [ "$CHANGE_COUNT" -gt 0 ]; then
-            echo "Creating alert for $CHANGE_COUNT changed document(s)."
-            gh issue create --title "LRCCD Policy Change Detected ($CHANGE_COUNT document(s))" --body "The LRCCD Policy Monitor detected $CHANGE_COUNT changed policy/regulation document(s). Review changes.json and the change_reports folder in the repository for details."
+            python - <<'PY'
+          import json
+          from pathlib import Path
+
+          changes = json.load(open("changes.json", encoding="utf-8"))
+
+          body = [
+              "# LRCCD Policy & Regulation Change Alert",
+              "",
+              f"**Documents changed:** {len(changes)}",
+              "",
+          ]
+
+          for change in changes:
+              body.extend([
+                  "---",
+                  "",
+                  f"## {change.get('document_type', '')} {change.get('document_number', '')} — {change.get('title', '')}",
+                  "",
+              ])
+
+              report_file = change.get("report_file")
+
+              if report_file and Path(report_file).exists():
+                  body.append(Path(report_file).read_text(encoding="utf-8"))
+              else:
+                  body.extend([
+                      f"**Detected:** {change.get('detected_at', '')}",
+                      f"**Source:** {change.get('url', '')}",
+                      "",
+                      f"**Lines added:** {change.get('lines_added', 'Unknown')}",
+                      f"**Lines removed:** {change.get('lines_removed', 'Unknown')}",
+                  ])
+
+              body.append("")
+
+          Path("issue_body.md").write_text("\n".join(body), encoding="utf-8")
+          PY
+
+            gh issue create \
+              --title "LRCCD Policy Change Detected ($CHANGE_COUNT document(s))" \
+              --body-file issue_body.md
           else
             echo "No changes detected. No issue created."
           fi
