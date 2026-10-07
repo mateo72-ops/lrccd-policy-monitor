@@ -12,35 +12,29 @@ permissions:
 jobs:
   monitor:
     runs-on: ubuntu-latest
-
     steps:
       - name: Get repository
         uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
       - name: Install dependencies
         run: pip install -r requirements.txt
-
       - name: Run policy monitor
         run: python monitor.py
-
       - name: Show results
         run: |
           echo "Monitor completed."
           python -c "import json; d=json.load(open('policy_state.json')); print('Documents tracked:', len(d))"
           python -c "import json; d=json.load(open('changes.json')); print('Changes detected:', len(d))"
-
       - name: Save monitoring state
         run: |
           git config user.name "LRCCD Policy Monitor"
           git config user.email "actions@github.com"
           git add policy_state.json changes.json document_text/
           if [ -d "change_reports" ]; then
-          git add change_reports/
+            git add change_reports/
           fi
           if git diff --cached --quiet; then
             echo "No monitoring state changes to save."
@@ -48,7 +42,6 @@ jobs:
             git commit -m "Update policy monitoring state"
             git push
           fi
-
       - name: Upload monitoring results
         uses: actions/upload-artifact@v4
         with:
@@ -56,18 +49,16 @@ jobs:
           path: |
             policy_state.json
             changes.json
-
-                  - name: Create issue when changes are detected
-        if: ${{ hashFiles('changes.json') != '' }}
+            change_reports/
+          if-no-files-found: ignore
+      - name: Create issue when changes are detected
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           CHANGE_COUNT=$(python -c "import json; print(len(json.load(open('changes.json'))))")
           if [ "$CHANGE_COUNT" -gt 0 ]; then
             echo "Creating alert for $CHANGE_COUNT changed document(s)."
-            gh issue create \
-              --title "LRCCD Policy Change Detected ($CHANGE_COUNT document(s))" \
-              --body "The LRCCD Policy Monitor detected $CHANGE_COUNT changed policy/regulation document(s). Review changes.json and the change_reports folder in the repository for details."
+            gh issue create --title "LRCCD Policy Change Detected ($CHANGE_COUNT document(s))" --body "The LRCCD Policy Monitor detected $CHANGE_COUNT changed policy/regulation document(s). Review changes.json and the change_reports folder in the repository for details."
           else
             echo "No changes detected. No issue created."
           fi
