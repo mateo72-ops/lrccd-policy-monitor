@@ -32,7 +32,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          REPORT_FILE=$(find change_reports -name 'Policy-1111-TEST_*.md' -type f | head -1)
+          REPORT_FILE=$(find change_reports -name 'Policy-1111-TEST_*.md' -type f -printf '%T@ %p\n' | sort -nr | head -1 | cut -d' ' -f2-)
 
           if [ -z "$REPORT_FILE" ]; then
             echo "No simulated report found."
