@@ -1,0 +1,185 @@
+EXPENDITURES 
+ 
+Contracts and Contract Procedures; 
+Information and Communication 
+Technology Accessibility 
+P-8321 
+Purchasing 1 of 4 
+ 
+1.0 Authorization to Contract 
+1.1 The Chancellor is authorized and empowered to contract in the name of Los Rios 
+Community College District subject to provisions of law and to approval or 
+ratification by the Los Rios Community College District Board of Trustees. (Ed. 
+Code, §§ 81655 and 81656) 
+1.2 The Chancellor is authorized and empowered to enter into emergency contracts 
+subject to the provisions of Public Contract Code, §§ 20654 and 22050. 
+2.0 Non-Discrimination and Affirmative Action for Contract 
+Compliance 
+2.1 Any contractor performing work or providing services for the Los Rios 
+Community College District must certify that there is no discrimination in the 
+company’s hiring or employment practices because of ethnic group identification, 
+race,  color, sex, gender, gender identity, gender expression, pregnancy or 
+childbirth-related condition, sexual orientation, sexual identity, religion or 
+religious creed, age (over forty), national origin, ancestry, physical or mental 
+disability, medical condition, political affiliation or belief, military and veteran 
+status, or marital status. 
+2.2 All contractors, subcontractors, vendors, and suppliers shall be notified of the 
+District’s employment policy (compliance with Executive Orders 11246 and 
+11375) and shall be requested to take appropriate action on their part. On all 
+contracts and bids, contractors, subcontractors, vendors, and suppliers shall be 
+asked to sign a notice of compliance, unless exempted by law. 
+2.3 The Chancellor will ensure that District purchasing procedures will comply with 
+state regulations on Minority, Women, and Disabled Veteran Business Enterprise 
+Participation Goals. (Title 5, § 59500) 
+2.4 The Chancellor shall ensure that District purchasing procedures comply with the 
+District’s conflict of interest Administrative Regulations. 
+3.0 Information and Communication Technology Accessibility 
+3.1 Intent 
+3.1.1 It is the policy of the District and its Colleges to work to provide 
+Information and Communication Technology (ICT) that is accessible to 
+its current and future students, faculty, staff, and other constituents and to 
+make the District/Colleges accessible institutions. 
+3.1.2 The District/Colleges are committed to working to provide websites, 
+learning management systems, course materials, documents, and business 
+applications that are usable by all current and future students, faculty, 
+
+EXPENDITURES 
+ 
+Contracts and Contract Procedures; 
+Information and Communication 
+Technology Accessibility 
+P-8321 
+Purchasing 2 of 4 
+ 
+staff, and other constituents. 
+3.1.3 Student, faculty and staff access to inclusive educational opportunities is 
+one of the District/Colleges’ highest priorities and requires a community 
+of stakeholders to design, monitor, and uphold accessible practices. 
+Offices across all Colleges  must work collaboratively to provide an 
+environment that protects the rights and dignity of students, faculty, and 
+staff. 
+3.2 Scope 
+3.2.1 This District Policy applies to all ICT used to conduct official 
+District/College academic and business functions.  
+3.3 Definitions 
+3.3.1 To make ICT “accessible” means to design the ICT to provide a person 
+with a disability the opportunity to acquire the same information, engage 
+in the same interactions, and enjoy the same services as a person without 
+a disability in an equally effective an d equally integrated manner, with 
+substantially equivalent ease of use. A person with a disability must be 
+able to obtain the information as fully, equally, and independently as a 
+person without a disability. 
+3.3.2 An “accessible institution” is one that is comm itted to the goal that all 
+students, faculty, staff, and constituents, including those with visual, 
+auditory, physical, speech, cognitive, and neurological disabilities, can 
+access the institution’s ICT. Specifically, they can perceive, understand, 
+navigate, interact, and contribute to ICT because its content and content-
+creation tools have been proactively designed to be accessible. 
+3.3.3 “Accommodation” is an alteration of environment, curriculum format, or 
+equipment that allows an individual with a disability to gain access to 
+content and/or complete assigned tasks. 
+3.3.4 An “adopter” of ICT is the faculty, staff or administrator that chooses to 
+use ICT in conjunction with official academic or business functions of the 
+District/College. 
+3.3.5 “Americans with Disabilities A ct (ADA)” refers to the Americans with 
+Disabilities Act of 1990. 
+3.3.6 “Disability Services and Program for Students (DSPS)” provides a variety 
+of academic support services to students with disabilities. DSPS’s goal is 
+to provide students the opportunity to part icipate fully in all aspects of 
+College programs and activities through appropriate and reasonable 
+accommodations. 
+3.3.7 “Information and Communication Technology (ICT)” refers to any 
+information technology, equipment, or interconnected system or 
+subsystem of equipment for which the principal function is the creation, 
+conversion, duplication, automatic acquisition, storage, analysis, 
+evaluation, manipulation, management, movement, control, display, 
+
+EXPENDITURES 
+ 
+Contracts and Contract Procedures; 
+Information and Communication 
+Technology Accessibility 
+P-8321 
+Purchasing 3 of 4 
+ 
+switching, interchange, transmission, reception, or broadcast of data or 
+information. Examples of ICT are electronic content, telecommunications 
+products, computers and ancillary equipment, software, information 
+kiosks and transaction machines, videos, IT services, and multi -function 
+office machines which copy, scan, and fax documents.  
+3.3.8 “Legacy ICT” is ICT created prior to the adoption of this policy that is 
+not currently accessible. 
+3.3.9 “Remediation” refers to the process of making legacy ICT accessible. A 
+remediation plan is one that successfully modifies legacy ICT (document, 
+website, etc.) so that it is accessible over a period of time. 
+3.3.10 “Section 504” is a part of the Rehabilitation Act of 1973 that prohibits 
+discrimination based upon disability.  
+3.3.11 “Section 508” A part of the Rehabilitation Act of 1973 that governs 
+accessibility of information technology (IT) in the Federal government, 
+and in any state or locality that accepts federal funding. 
+3.3.12 WCAG 2.0” or Web Content Accessibility Guidelines (WCAG) 2.0 
+defines how to make Web content more accessible to people with 
+disabilities. Accessibility involves a wide range of disabilities, including 
+visual, auditory, physical, speech, cognitive, language, learning, and 
+neurological disabilities. 
+3.4 Standards and Guidelines 
+3.4.1 The District/Colleges shall  adhere to the following standards and  
+guidelines related to accessibility of ICT: 
+3.4.1.1 Sections 504 and 508 of the Rehabilitation Act of 1973; 
+3.4.1.2 Title II of the Americans with Disabilities Act; 
+3.4.1.3 Accessibility standards described in the Web Content Accessibility 
+Guidelines (WCAG), version 2.0, levels A and AA, or the most 
+current version approved by the Vice Chancellor of Education and 
+Technology.  
+3.5 Accommodations 
+3.5.1 Faculty or staff r equests for accommodations regarding ICT or legacy 
+ICT shall be resolved by the Vice President of Administration at the 
+College in consultation with Human Resources. 
+3.6 Selection of ICT and Technology Procurement 
+3.6.1 Within 36 months of the adoption of this policy, all new (i.e. non-existent 
+until after this policy was adopted) or redeveloped (i.e. existing before 
+this Policy was adopted but substantially changed in terms of its 
+functionality or structure after the policy was adopted) ICT shall be made 
+accessible, unless to do so places an undue burden on the District/College, 
+or to do so will fundamentally alter the nature of the educational program 
+
+EXPENDITURES 
+ 
+Contracts and Contract Procedures; 
+Information and Communication 
+Technology Accessibility 
+P-8321 
+Purchasing 4 of 4 
+ 
+or service.. 
+3.6.2 Staff and administrator adopters of ICT shall select ICT that is accessible, 
+unless to do so places an undue burden on the D istrict/College, or to do 
+so will fundamentally alter the nature of the educational program or 
+service. 
+3.6.3 The District/Colleges shall make ICT accessible in a timely manner and 
+in such a way as to protect the privacy and independence of persons with 
+disabilities. 
+3.6.4 Where ICT cannot be made accessible, the District/Colleges shall provide 
+equally effective alternative access to the student, faculty, staff or 
+administrator. 
+3.6.5 The District/Colleges shall purchase ICT that is accessible, as long as the 
+technology is available for purchase and does not constitute an undue 
+burden on the District/Colleges or result in fundamental alterations of the 
+educational programs or services of the District/Colleges. 
+3.6.6 Upon request by a qualified person with a disability, Legacy ICT shall be 
+made accessible unless to do constitute s an undue burden on the 
+District/Colleges or result in fundamental alterations of the educational 
+programs or services of the District/Colleges.  
+3.6.7 Where ICT is identified that is not accessible, the District/College shall  
+promptly render the ICT accessible unless to do so constitutes and undue 
+burden on the District/Colleges or results in fundamental alterations of 
+the educational programs or services of the District/Colleges. 
+3.6.8 Where ICT cannot be made accessible, the District/Colleges shall provide 
+equally effective alternative access to the student, faculty, staff or 
+administrator. 
+(Formerly P-8311) 
+LRCCD 
+Policy Adopted: 9/1/65 
+Policy Revised: 1/23/74; 2/4/81; 6/16/82; 4/19/95; 6/10/15; 11/9/16; 10/16/19 
+Policy Reviewed: 11/9/16; 10/16/19 
+Adm. Regulation: R-8321

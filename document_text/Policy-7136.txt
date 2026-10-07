@@ -1,0 +1,126 @@
+INSTRUCTIONAL PROGRAM Information and Communication Technology 
+Accessibility 
+P-7136 
+Instructional Arrangements  1 of 3 
+ 
+1.0 Intent 
+1.1 It is the policy of the Los Rios Community College District and its Colleges to 
+work to provide Information and Communication Technology (ICT) that is 
+accessible to current and future students, faculty, staff, and other constituents, and 
+to make the District/Colleges accessible institutions.  
+1.2 The District/Colleges are committed to working to provide websites, learning 
+management systems, course materials, documents, and business applications that 
+are usable by all current and future students, faculty, staff, and other constituents. 
+1.3 Student, faculty and staff access to inclusive educational opportunities is one of 
+the District/Colleges’ highest priorities and requires a community of stakeholders 
+to design, monitor, and uphold accessible practices. Offices across all Colleges 
+must work collaboratively to provide an environment that protects the rights and 
+dignity of students, faculty, and staff. 
+2.0 Scope of the Policy  
+2.1 This District Policy applies to all ICT used to conduct official District/College 
+academic and business functions. Attached hereto is the District’s ICT Statement. 
+[Appendix A] 
+3.0 Definitions 
+3.1 To make ICT “accessible” means to design the ICT to provide a person with a 
+disability the opportunity to acquire the same information, engage in the same 
+interactions, and enjoy the same services as a person without a disability in an 
+equally effective and equally integrated manner, with substantially equivalent 
+ease of use. A person with a disability must be able to obtain the information as 
+fully, equally, and independently as a person without a disability. 
+3.2 An “accessible institution” is one that is committed to the goal that all students, 
+faculty, staff, and constituents can access the institution’s ICT. Specifically, they 
+can perceive, understand, navigate, interact, and contribute to ICT because the 
+content and content-creation tools have been proactively designed to be 
+accessible. 
+3.3  “Accommodation” is an alteration of environment, curriculum format, or 
+equipment that allows an individual with a disability to gain access to content 
+and/or complete assigned tasks. 
+3.4 An “adopter” of ICT is the faculty, staff or administrator that chooses to use ICT 
+in conjunction with official academic or business functions of the 
+District/College. 
+ 
+
+INSTRUCTIONAL PROGRAM Information and Communication Technology 
+Accessibility 
+P-7136 
+Instructional Arrangements  2 of 3 
+ 
+3.5 “Americans with Disabilities Act (ADA)” refers to the Americans with 
+Disabilities Act of 1990. 
+3.6 “Disability Services and Program for Students (DSPS)” provides a variety of 
+academic support services to students with disabilities. DSPS’s goal is to provide 
+students the opportunity to participate fully in all aspects of College programs and 
+activities through appropriate and reasonable accommodations. 
+3.7 “Information and Communication Technology (ICT)” refers to any information 
+technology, equipment, or interconnected system or subsystem of equipment for 
+which the principal function is the creation, conversion, duplication, automatic 
+acquisition, storage, analysis, evaluation, manipulation, management, movement, 
+control, display, switching, interchange, transmission, reception, or broadcast of 
+data or information. Examples of ICT are electronic content, telecommunications 
+products, computers and ancillary equipment, software, information kiosks and 
+transaction machines, videos, IT services, and multi-function office machines 
+which copy, scan, and fax documents.  
+3.8 “Legacy ICT” is ICT created prior to the adoption of this policy that is not 
+currently accessible. 
+3.9 “Remediation” refers to the process of making legacy ICT accessible. A 
+remediation plan is one that successfully modifies legacy ICT (document, 
+website, etc.) so that it is accessible over a period of time. 
+3.10 “Section 504” is a part of the Rehabilitation Act of 1973 that prohibits 
+discrimination based upon disability. 
+3.11 “Section 508” A part of the Rehabilitation Act of 1973 that governs accessibility 
+of information technology (IT) in the Federal government, and in any state or 
+locality that accepts federal funding. 
+3.12  “WCAG 2.0” or Web Content Accessibility Guidelines (WCAG) 2.0 defines how 
+to make Web content more accessible to people with disabilities. Accessibility 
+involves a wide range of disabilities, including visual, auditory, physical, speech, 
+cognitive, language, learning, and neurological disabilities. 
+4.0 Standard and Guidelines 
+4.1 The District/Colleges shall adhere to the following standards and guidelines 
+related to accessibility of ICT: 
+4.1.1 Sections 504 and 508 of the Rehabilitation Act of 1973; 
+4.1.2 Title II of the Americans with Disabilities Act; 
+4.1.3 Accessibility standards described in the Web Content Accessibility 
+Guidelines (WCAG), version 2.0, levels A and AA, or the most current 
+version approved by the Vice Chancellor of Education and Technology.  
+
+INSTRUCTIONAL PROGRAM Information and Communication Technology 
+Accessibility 
+P-7136 
+Instructional Arrangements  3 of 3 
+ 
+5.0 Accommodations 
+5.1 Student requests for accommodations regarding ICT or legacy ICT shall be 
+resolved by the DSPS offices.  
+5.2 Appeals of student requests for accommodations shall be resolved pursuant to 
+Administrative Regulation 2731. 
+5.3 Appeals of faculty, staff or public requests for accommodation shall be resolved 
+by the College’s 504 Officer in consultation with Human Resources. 
+6.0 Selection of ICT 
+6.1 Within 36 months of the adoption of this policy, all new (i.e. non-existent until 
+after this policy was adopted) or redeveloped (i.e. existing before this policy was 
+adopted but substantially changed in terms of functionality or structure after the 
+policy was adopted) ICT shall be made accessible unless to do so places an undue 
+burden on the District/College, or to do so will fundamentally alter the nature of 
+the educational program or service. 
+6.2 The District Policy for faculty selection of textbooks and academic materials for 
+courses are set forth in District Policy and Administrative Regulation 7134, 
+however, faculty adopters of ICT shall select ICT that is accessible, unless to do 
+so places an undue burden on the District/College, or to do so will fundamentally 
+alter the nature of the educational program or service. 
+6.3 The District/Colleges shall make ICT accessible in a timely manner and in such a 
+way as to protect the privacy and independence of persons with disabilities. 
+6.4 Upon request by a qualified person with a disability, legacy ICT shall be made 
+accessible unless to do so constitutes an undue burden on the District/Colleges or 
+results in fundamental alterations of the educational programs or services of the 
+District/Colleges. 
+6.5 Where ICT is identified that is not accessible, the District/College shall promptly 
+render the ICT accessible unless to do so constitutes an undue burden on the 
+District/Colleges or results in fundamental alterations of the educational programs 
+or services of the District/Colleges. 
+6.6 Where ICT cannot be made accessible, the District/Colleges shall provide equally 
+effective alternative access to the student, faculty, staff or administrator. 
+LRCCD 
+Policy Adopted: 10/16/19 
+Policy Revised:  
+Policy Reviewed:  
+Adm. Regulation:
