@@ -95,17 +95,22 @@ def save_text(key, text):
 
 def make_change_report(key, document, old_text, new_text, detected_at):
     REPORT_DIR.mkdir(exist_ok=True)
-    diff_lines = list(difflib.unified_diff(
-        old_text.splitlines(), new_text.splitlines(),
-        fromfile=f"{key} OLD", tofile=f"{key} NEW", lineterm="", n=3
+        diff_lines = list(difflib.unified_diff(
+        old_text.splitlines(),
+        new_text.splitlines(),
+        fromfile=f"{key} OLD",
+        tofile=f"{key} NEW",
+        lineterm="",
+        n=3,
     ))
-        old_lines = old_text.splitlines()
-        new_lines = new_text.splitlines()
+
+    old_lines = old_text.splitlines()
+    new_lines = new_text.splitlines()
 
     matcher = difflib.SequenceMatcher(
         None,
         old_lines,
-        new_lines
+        new_lines,
     )
 
     affected_sections = []
