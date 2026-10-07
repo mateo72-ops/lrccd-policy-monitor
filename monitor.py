@@ -99,8 +99,40 @@ def make_change_report(key, document, old_text, new_text, detected_at):
         old_text.splitlines(), new_text.splitlines(),
         fromfile=f"{key} OLD", tofile=f"{key} NEW", lineterm="", n=3
     ))
+        old_lines = old_text.splitlines()
+        new_lines = new_text.splitlines()
+
+    matcher = difflib.SequenceMatcher(
+        None,
+        old_lines,
+        new_lines
+    )
+
+    affected_sections = []
+
+    for tag, i1, i2, j1, j2 in matcher.get_opcodes():
+        if tag == "equal":
+            continue
+
+        section = find_section(
+            old_lines,
+            max(i1 - 1, 0)
+        )
+
+        if section not in affected_sections:
+            affected_sections.append(section)
     safe_time = detected_at.replace(":", "-").replace("+", "_")
     report_path = REPORT_DIR / f"{key}_{safe_time}.md"
+
+    section_lines = ["## Affected section(s)", ""]
+
+    if affected_sections:
+        for section in affected_sections:
+            section_lines.append(f"- {section}")
+    else:
+        section_lines.append("- Section could not be determined automatically")
+
+    section_lines.append("")
     header = [
         f"# Change Report: {key}", "",
         f"**Title:** {document['title']}",
@@ -113,7 +145,7 @@ def make_change_report(key, document, old_text, new_text, detected_at):
         "Lines beginning with `+` were added in the new version.", "",
         "```diff",
     ]
-    report_path.write_text("\n".join(header + diff_lines + ["```", ""]), encoding="utf-8")
+    report_path.write_text("\n".join(header + section_lines + diff_lines + ["```", ""]), encoding="utf-8")
     added = sum(1 for line in diff_lines if line.startswith("+") and not line.startswith("+++"))
     removed = sum(1 for line in diff_lines if line.startswith("-") and not line.startswith("---"))
     return str(report_path), added, removed
