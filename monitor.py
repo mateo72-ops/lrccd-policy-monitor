@@ -50,7 +50,28 @@ def discover_documents():
 def extract_pdf_text(pdf_bytes):
     reader = PdfReader(io.BytesIO(pdf_bytes))
     return "\n\n".join((page.extract_text() or "") for page in reader.pages).strip()
+def find_section(lines, changed_line_index):
+    """
+    Look backward from a changed line and find the nearest
+    numbered section heading.
+    """
+    section_pattern = re.compile(
+        r"^\s*(\d+(?:\.\d+)*)\s+(.+)$"
+    )
 
+    for index in range(changed_line_index, -1, -1):
+        line = lines[index].strip()
+        match = section_pattern.match(line)
+
+        if match:
+            section_number = match.group(1)
+            section_title = match.group(2)
+
+            # Ignore numbered paragraphs that are really body text.
+            if len(section_title.split()) <= 8:
+                return f"{section_number} {section_title}"
+
+    return "Section could not be determined automatically"
 def download_document(url):
     response = get_page(url)
     data = response.content
