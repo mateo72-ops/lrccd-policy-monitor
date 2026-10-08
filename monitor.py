@@ -13,6 +13,7 @@ from pypdf import PdfReader
 POLICY_PAGE = "https://losrios.edu/about-los-rios/board-of-trustees/policies-and-regulations"
 STATE_FILE = Path("policy_state.json")
 CHANGES_FILE = Path("changes.json")
+HISTORY_FILE = Path("change_history.json")
 TEXT_DIR = Path("document_text")
 REPORT_DIR = Path("change_reports")
 
@@ -209,6 +210,11 @@ def main():
     print(f"Discovered {len(documents)} documents.")
     previous_state = load_previous_state()
     new_state, changes = {}, []
+    
+    if HISTORY_FILE.exists():
+        history = json.loads(HISTORY_FILE.read_text(encoding="utf-8"))
+    else:
+        history = []    
 
     for count, (key, document) in enumerate(sorted(documents.items()), start=1):
         print(f"[{count}/{len(documents)}] {key} - {document['title']}")
@@ -262,6 +268,8 @@ def main():
                 "old_size_bytes": previous.get("size_bytes"), "new_size_bytes": current["size_bytes"],
                 "report_file": report_file, "added_lines": added, "removed_lines": removed,
             })
+            
+            history.append(changes[-1].copy())
 
         else:
             current["status"] = "unchanged"
@@ -282,6 +290,7 @@ def main():
 
     STATE_FILE.write_text(json.dumps(new_state, indent=2), encoding="utf-8")
     CHANGES_FILE.write_text(json.dumps(changes, indent=2), encoding="utf-8")
+    HISTORY_FILE.write_text(json.dumps(history, indent=2), encoding="utf-8")
     print()
     print("---------------------------------")
     print(f"Documents checked: {len(new_state)}")
