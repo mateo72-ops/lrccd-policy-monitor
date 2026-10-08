@@ -33,7 +33,7 @@ jobs:
         run: |
           git config user.name "LRCCD Policy Monitor"
           git config user.email "actions@github.com"
-          git add policy_state.json changes.json document_text/
+          git add policy_state.json changes.json change_history.json document_text/
           if [ -d "change_reports" ]; then
             git add change_reports/
           fi
