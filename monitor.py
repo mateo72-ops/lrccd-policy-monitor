@@ -258,14 +258,14 @@ def main():
             continue
 
         current = {**document, **fingerprint, "last_checked": checked_at}
-    try:
-        revision_text = extract_pdf_text(pdf_bytes)
-        current["revision_date"] = extract_revision_date(revision_text)
-    except Exception as error:
-        current["revision_date"] = None
-        print(f"  REVISION DATE ERROR: {error}")
-    previous = previous_state.get(key)
-    baseline_path = text_path_for(key)
+        try:
+            revision_text = extract_pdf_text(pdf_bytes)
+            current["revision_date"] = extract_revision_date(revision_text)
+        except Exception as error:
+            current["revision_date"] = None
+            print(f"  REVISION DATE ERROR: {error}")
+        previous = previous_state.get(key)
+        baseline_path = text_path_for(key)
 
         if previous is None or previous.get("sha256") is None:
             current["status"] = "baseline"
