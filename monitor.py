@@ -3,7 +3,7 @@ import hashlib
 import io
 import json
 import re
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date
 from pathlib import Path
 from urllib.parse import urljoin
 import requests
@@ -49,8 +49,40 @@ def discover_documents():
     return documents
 
 def extract_pdf_text(pdf_bytes):
-    reader = PdfReader(io.BytesIO(pdf_bytes))
+    reader = PdfReader(io.BytesIO(pdf_bytes))    
     return "\n\n".join((page.extract_text() or "") for page in reader.pages).strip()
+
+
+def extract_revision_date(text):
+    """Find the most recent revision date printed in a policy or regulation."""
+
+    patterns = [
+        r"Policy Revised\s*:\s*([^\n]+)",
+        r"Adm\.?\s*Regulation Revised\s*:\s*([^\n]+)",
+    ]
+
+    dates = []
+
+    for pattern in patterns:
+        for match in re.finditer(pattern, text, re.IGNORECASE):
+            date_strings = re.findall(
+                r"\b\d{1,2}/\d{1,2}/\d{2,4}\b",
+                match.group(1)
+            )
+
+            for date_string in date_strings:
+                for date_format in ("%m/%d/%y", "%m/%d/%Y"):
+                    try:
+                        dates.append(
+                            datetime.strptime(date_string, date_format).date()
+                        )
+                        break
+                    except ValueError:
+                        continue
+
+    return max(dates).isoformat() if dates else None
+
+
 def find_section(lines, changed_line_index):
     """
     Look backward from a changed line and find the nearest
@@ -226,6 +258,12 @@ def main():
             continue
 
         current = {**document, **fingerprint, "last_checked": checked_at}
+    try:
+        revision_text = extract_pdf_text(pdf_bytes)
+        current["revision_date"] = extract_revision_date(revision_text)
+    except Exception as error:
+        current["revision_date"] = None
+        print(f"  REVISION DATE ERROR: {error}")
         previous = previous_state.get(key)
         baseline_path = text_path_for(key)
 
