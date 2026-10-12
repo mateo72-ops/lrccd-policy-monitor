@@ -264,8 +264,8 @@ def main():
     except Exception as error:
         current["revision_date"] = None
         print(f"  REVISION DATE ERROR: {error}")
-        previous = previous_state.get(key)
-        baseline_path = text_path_for(key)
+    previous = previous_state.get(key)
+    baseline_path = text_path_for(key)
 
         if previous is None or previous.get("sha256") is None:
             current["status"] = "baseline"
