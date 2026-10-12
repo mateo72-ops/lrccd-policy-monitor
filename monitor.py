@@ -71,11 +71,18 @@ def extract_revision_date(text):
             )
 
             for date_string in date_strings:
-                for date_format in ("%m/%d/%y", "%m/%d/%Y"):
+                for date_format in ("%m/%d/%Y", "%m/%d/%y"):
                     try:
-                        dates.append(
-                            datetime.strptime(date_string, date_format).date()
-                        )
+                        parsed_date = datetime.strptime(
+                            date_string, date_format
+                        ).date()
+
+                        if parsed_date.year > datetime.now().year:
+                            parsed_date = parsed_date.replace(
+                                year=parsed_date.year - 100
+                            )
+
+                        dates.append(parsed_date)
                         break
                     except ValueError:
                         continue
