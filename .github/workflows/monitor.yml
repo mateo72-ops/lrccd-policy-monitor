@@ -32,12 +32,14 @@ jobs:
       
       - name: Build searchable document index
         run: python build_search_index.py
+      - name: Build legal reference index
+        run: python build_legal_references.py
       
       - name: Save monitoring state
         run: |
           git config user.name "LRCCD Policy Monitor"
           git config user.email "actions@github.com"
-          git add policy_state.json changes.json change_history.json document_text/ policy_search_index.csv
+          git add policy_state.json changes.json change_history.json document_text/ policy_search_index.csv legal_references.csv
           if [ -d "change_reports" ]; then
             git add change_reports/
           fi
