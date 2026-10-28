@@ -60,10 +60,16 @@ def main():
                         f"sectionNum={section}&lawCode=EDC"
                     )
                 else:
-                    legal_url = (
-                        "https://govt.westlaw.com/calregs/"
-                        "Index?transitionType=Default"
-                    )
+                    if section == "58500":
+                        legal_url = (
+                            "https://govt.westlaw.com/calregs/"
+                            "Document/I6B8889714C6911EC93A8000D3A7C4BC3"
+                        )
+                    else:
+                        legal_url = (
+                            "https://govt.westlaw.com/calregs/"
+                            "Index?transitionType=Default"
+                        )
 
                 rows.append([
                     key,
