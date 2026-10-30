@@ -31,23 +31,29 @@ PATTERNS = [
 
 
 def main():
-    state = json.loads(STATE_FILE.read_text(encoding="utf-8"))
+    state = json.loads(
+        STATE_FILE.read_text(encoding="utf-8")
+    )
+
     rows = []
 
     for key, document in sorted(state.items()):
         path = TEXT_DIR / f"{key}.txt"
+
         if not path.exists():
             continue
 
         text = " ".join(
             path.read_text(
-                encoding="utf-8", errors="replace"
+                encoding="utf-8",
+                errors="replace"
             ).split()
         )
 
         for reference_type, pattern in PATTERNS:
             for match in pattern.finditer(text):
                 section = match.group(1)
+
                 excerpt = text[
                     max(0, match.start() - 100):
                     min(len(text), match.end() + 150)
@@ -59,17 +65,13 @@ def main():
                         "faces/codes_displaySection.xhtml?"
                         f"sectionNum={section}&lawCode=EDC"
                     )
+
                 else:
-                    if section == "58500":
-                        legal_url = (
-                            "https://govt.westlaw.com/calregs/"
-                            "Document/I6B8889714C6911EC93A8000D3A7C4BC3"
-                        )
-                    else:
-                        legal_url = (
-                            "https://govt.westlaw.com/calregs/"
-                            "Index?transitionType=Default"
-                        )
+                    legal_url = (
+                        "https://www.law.cornell.edu/"
+                        "regulations/california/"
+                        f"5-CCR-{section}"
+                    )
 
                 rows.append([
                     key,
@@ -85,9 +87,12 @@ def main():
                 ])
 
     with OUTPUT_FILE.open(
-        "w", newline="", encoding="utf-8-sig"
+        "w",
+        newline="",
+        encoding="utf-8-sig"
     ) as file:
         writer = csv.writer(file)
+
         writer.writerow([
             "DocumentKey",
             "DocumentNumber",
@@ -100,6 +105,7 @@ def main():
             "LegalURL",
             "DocumentURL",
         ])
+
         writer.writerows(rows)
 
     print(f"Legal citations found: {len(rows)}")
