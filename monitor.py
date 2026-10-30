@@ -54,38 +54,53 @@ def extract_pdf_text(pdf_bytes):
 
 
 def extract_revision_date(text):
-    """Find the most recent revision date printed in a policy or regulation."""
+    """Return the latest date in a Policy/Adm. Regulation Revised history.
 
-    patterns = [
-        r"Policy Revised\s*:\s*([^\n]+)",
-        r"Adm\.?\s*Regulation Revised\s*:\s*([^\n]+)",
-    ]
-
+    PDF extraction can wrap a revision history across multiple lines.
+    Only date-only continuation lines are included, so unrelated dates
+    elsewhere in the document are not treated as revision dates.
+    """
+    label = re.compile(
+        r"(?:Policy|Adm\.?\s*Regulation|Administrative\s+Regulation)"
+        r"\s+Revised\s*:",
+        re.IGNORECASE,
+    )
+    date_pattern = re.compile(r"\b\d{1,2}/\d{1,2}/\d{2,4}\b")
+    # A continuation line may contain dates separated by commas, semicolons,
+    # whitespace, slashes, or ampersands, but no unrelated prose.
+    dates_only = re.compile(
+        r"^[\s,;:&\-–()]*"
+        r"(?:\d{1,2}/\d{1,2}/\d{2,4}"
+        r"[\s,;:&\-–()]*)+$"
+    )
     dates = []
+    lines = text.splitlines()
 
-    for pattern in patterns:
-        for match in re.finditer(pattern, text, re.IGNORECASE):
-            date_strings = re.findall(
-                r"\b\d{1,2}/\d{1,2}/\d{2,4}\b",
-                match.group(1)
-            )
+    for index, line in enumerate(lines):
+        match = label.search(line)
+        if not match:
+            continue
 
-            for date_string in date_strings:
-                for date_format in ("%m/%d/%Y", "%m/%d/%y"):
-                    try:
-                        parsed_date = datetime.strptime(
-                            date_string, date_format
-                        ).date()
+        candidates = [line[match.end():]]
+        for following in lines[index + 1:index + 12]:
+            stripped = following.strip()
+            if not stripped:
+                # PDF extraction sometimes inserts empty lines in a history.
+                continue
+            if not dates_only.fullmatch(stripped):
+                break
+            candidates.append(stripped)
 
-                        if parsed_date.year > datetime.now().year:
-                            parsed_date = parsed_date.replace(
-                                year=parsed_date.year - 100
-                            )
-
-                        dates.append(parsed_date)
-                        break
-                    except ValueError:
-                        continue
+        for value in date_pattern.findall(" ".join(candidates)):
+            for fmt in ("%m/%d/%Y", "%m/%d/%y"):
+                try:
+                    parsed = datetime.strptime(value, fmt).date()
+                    if parsed.year > datetime.now().year:
+                        parsed = parsed.replace(year=parsed.year - 100)
+                    dates.append(parsed)
+                    break
+                except ValueError:
+                    continue
 
     return max(dates).isoformat() if dates else None
 
